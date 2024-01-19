@@ -120,7 +120,7 @@ fn fix_all_books(cfg: &types::Config, base_path: &PathBuf, output_path: &Path) {
                 .and_then(OsStr::to_str)
                 .unwrap_or("")
                 .to_lowercase();
-            ALLOWED_EXT == &ext
+            ALLOWED_EXT == ext
         })
         .filter(|e| cfg.force || is_updated_since_last_run(e, last_run_time))
         .collect::<Vec<_>>()
