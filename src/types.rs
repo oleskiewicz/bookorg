@@ -2,7 +2,7 @@ use clap::Parser;
 use id3::Tag;
 use std::path::PathBuf;
 
-pub struct Track {
+pub struct Book {
     pub path: PathBuf,
     pub tag: Tag,
 }
@@ -27,7 +27,7 @@ pub struct Config {
     #[arg(
         long,
         short,
-        help = "Ignore .lastmack timestamp, run on all files present regardless"
+        help = "Ignore .lastbookorg timestamp, run on all files present regardless"
     )]
     pub force: bool,
 
@@ -62,6 +62,6 @@ pub struct Config {
     )]
     pub fmt: String,
 
-    #[arg(help = "Directories to find music files in.")]
+    #[arg(help = "Directories to find ebook files in.")]
     pub paths: Option<Vec<PathBuf>>,
 }

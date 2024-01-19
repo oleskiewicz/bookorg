@@ -1,12 +1,12 @@
 [package]
-name = "mack"
-version = "1.4.0"
+name = "bookorg"
+version = "0.1.0"
 edition = "2021"
-authors = ["Chris Down <chris@chrisdown.name>"]
+authors = ["Piotr Oleskiewicz <piotr@oleskiewi.cz>"]
 description = "An opinionated, fast music organiser."
-repository = "https://github.com/cdown/mack"
+repository = "https://github.com/oleskiewicz/bookorg"
 readme = "README.md"
-keywords = ["music", "audio", "organiser", "tagging", "mp3"]
+keywords = ["book", "organiser", "tagging", "epub"]
 categories = ["command-line-utilities", "filesystem"]
 license = "MIT"
 rust-version = "1.65.0"

@@ -1,4 +1,4 @@
-use crate::types::Track;
+use crate::types::Book;
 use anyhow::{Context, Result};
 use funcfmt::{FormatPieces, Render};
 use once_cell::sync::Lazy;
@@ -69,9 +69,9 @@ fn add_extension(path: PathBuf, ext: impl AsRef<OsStr>) -> PathBuf {
     os_string.into()
 }
 
-pub fn rename_track(
-    track: &Track,
-    fp: &FormatPieces<Track>,
+pub fn rename_item(
+    track: &Book,
+    fp: &FormatPieces<Book>,
     output_path: &Path,
     dry_run: bool,
 ) -> Result<Option<PathBuf>> {

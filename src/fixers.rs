@@ -1,21 +1,18 @@
 use crate::extract::extract_feat;
-use crate::types::{Track, TrackFeat};
-use anyhow::{bail, Result};
+use crate::types::{Book, TrackFeat};
+use anyhow::Result;
 use cow_utils::CowUtils;
-use id3::{Tag, TagLike, Version};
+use id3::{TagLike, Version};
 use once_cell::sync::Lazy;
 use regex::Regex;
 
 static MULTI_WS_RE: Lazy<Regex> = Lazy::new(|| Regex::new(r"[ \t]+").expect("BUG: Invalid regex"));
 
-pub fn run_fixers(track: &mut Track, dry_run: bool) -> Result<bool> {
+pub fn run_fixers(track: &mut Book, dry_run: bool) -> Result<bool> {
     let tags = &mut track.tag;
 
-    fixer_is_blacklisted(tags)?;
-
     let new_title = fix_title(tags.title(), tags.artist());
-    let new_artist = fix_artist(tags.artist());
-    let new_album = fix_album(tags.album());
+    let new_artist = fix_author(tags.artist());
     let mut changed = false;
 
     if let Some(new_artist) = new_artist {
@@ -25,10 +22,6 @@ pub fn run_fixers(track: &mut Track, dry_run: bool) -> Result<bool> {
     if let Some(new_title) = new_title {
         changed = true;
         tags.set_title(&new_title);
-    }
-    if let Some(new_album) = new_album {
-        changed = true;
-        tags.set_album(&new_album);
     }
 
     if !dry_run && changed {
@@ -54,8 +47,8 @@ fn normalise_field(field: &str) -> String {
         .to_string()
 }
 
-fn fix_artist(old_artist: Option<&str>) -> Option<String> {
-    let field = normalise_field(old_artist.unwrap_or_default());
+fn fix_author(old_author: Option<&str>) -> Option<String> {
+    let field = normalise_field(old_author.unwrap_or_default());
     let artist = extract_feat(&field);
     if artist.title == artist.original_title {
         None
@@ -64,25 +57,12 @@ fn fix_artist(old_artist: Option<&str>) -> Option<String> {
     }
 }
 
-fn fix_album(old_album: Option<&str>) -> Option<String> {
-    let Some(old_album) = old_album else {
-        return None;
-    };
-    let new_album = normalise_field(old_album);
-
-    if new_album == old_album {
-        None
-    } else {
-        Some(new_album)
-    }
-}
-
-fn fix_title(old_title: Option<&str>, old_artist: Option<&str>) -> Option<String> {
+fn fix_title(old_title: Option<&str>, old_author: Option<&str>) -> Option<String> {
     let Some(old_title) = old_title else {
         return None;
     };
     let old_title = extract_feat(old_title);
-    let old_artist = extract_feat(old_artist.unwrap_or_default());
+    let old_artist = extract_feat(old_author.unwrap_or_default());
     let new_title = make_title(&old_title, old_artist);
 
     if new_title == old_title.original_title {
@@ -92,9 +72,9 @@ fn fix_title(old_title: Option<&str>, old_artist: Option<&str>) -> Option<String
     }
 }
 
-fn make_title(title: &TrackFeat, artist: TrackFeat) -> String {
+fn make_title(title: &TrackFeat, author: TrackFeat) -> String {
     let mut featured_artists = title.featured_artists.clone();
-    featured_artists.extend(artist.featured_artists);
+    featured_artists.extend(author.featured_artists);
 
     let mut new_title = title.title.clone();
     if !featured_artists.is_empty() {
@@ -129,15 +109,6 @@ fn make_feat_string(featured_artists: &[String]) -> String {
     output
 }
 
-fn fixer_is_blacklisted(tags: &Tag) -> Result<()> {
-    for comment in tags.comments() {
-        if comment.text.contains("_NO_MACK") {
-            bail!("Comment contains _NO_MACK");
-        }
-    }
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,14 +117,14 @@ mod tests {
     fn test_fix_artist_no_feat() {
         let given = "Foo Bar";
         let expected = None;
-        assert_eq!(fix_artist(Some(given)), expected);
+        assert_eq!(fix_author(Some(given)), expected);
     }
 
     #[test]
     fn test_fix_artist_with_feat() {
         let given = "Foo Bar (feat. Baz Qux)";
         let expected = Some("Foo Bar".to_owned());
-        assert_eq!(fix_artist(Some(given)), expected);
+        assert_eq!(fix_author(Some(given)), expected);
     }
 
     #[test]
