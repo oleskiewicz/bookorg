@@ -31,21 +31,6 @@ pub struct Config {
     )]
     pub output_dir: Option<PathBuf>,
 
-    /// The format to apply to files, excluding the extension.
-    ///
-    /// Substitutions can be applied inside curly brackets, for example with {artist} to get the
-    /// track artist. Any formats returning data with "/" will have it transformed to "_".
-    ///
-    /// Available formats:
-    ///
-    /// TAG:
-    ///
-    ///   author
-    ///   title
-    ///
-    /// LITERAL:
-    ///
-    ///   {{ and }} indicate literal brackets.
     #[arg(long, verbatim_doc_comment, default_value = "{author}/{title}")]
     pub fmt: String,
 
