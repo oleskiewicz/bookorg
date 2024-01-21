@@ -1,17 +1,10 @@
 use clap::Parser;
-use id3::Tag;
 use std::path::PathBuf;
 
 pub struct Book {
     pub path: PathBuf,
-    pub tag: Tag,
-}
-
-#[derive(Debug, PartialEq, Eq)]
-pub struct TrackFeat {
-    pub title: String,
-    pub featured_artists: Vec<String>,
-    pub original_title: String,
+    pub author: Option<String>,
+    pub title: Option<String>,
 }
 
 #[derive(Parser, Debug)]
@@ -47,19 +40,13 @@ pub struct Config {
     ///
     /// TAG:
     ///
-    ///   artist
-    ///   album
-    ///   track  (width: 2)
+    ///   author
     ///   title
     ///
     /// LITERAL:
     ///
     ///   {{ and }} indicate literal brackets.
-    #[arg(
-        long,
-        verbatim_doc_comment,
-        default_value = "{artist}/{album}/{track} {title}"
-    )]
+    #[arg(long, verbatim_doc_comment, default_value = "{author}/{title}")]
     pub fmt: String,
 
     #[arg(help = "Directories to find ebook files in.")]

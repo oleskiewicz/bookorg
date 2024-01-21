@@ -70,30 +70,29 @@ fn add_extension(path: PathBuf, ext: impl AsRef<OsStr>) -> PathBuf {
 }
 
 pub fn rename_item(
-    track: &Book,
+    book: &Book,
     fp: &FormatPieces<Book>,
     output_path: &Path,
     dry_run: bool,
 ) -> Result<Option<PathBuf>> {
     let mut new_path = output_path.to_path_buf();
-    let partial = normalise_dirs(fp.render(track)?);
+    let partial = normalise_dirs(fp.render(book)?);
     new_path.push(partial);
 
     // We might have truncated and have a dot elsewhere, so we can't use set_extension
     new_path = add_extension(
         new_path,
-        track
-            .path
+        book.path
             .extension()
             .context("ext required in walkbuilder, but missing")?,
     );
 
-    if new_path == track.path {
+    if new_path == book.path {
         return Ok(None);
     }
 
     if !dry_run {
-        rename_creating_dirs(&track.path, &new_path)?;
+        rename_creating_dirs(&book.path, &new_path)?;
     }
 
     Ok(Some(new_path))

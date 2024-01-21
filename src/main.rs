@@ -1,5 +1,4 @@
 mod book;
-mod extract;
 mod fixers;
 mod mtime;
 mod rename;
@@ -8,7 +7,6 @@ mod types;
 use anyhow::Result;
 use clap::Parser;
 use funcfmt::{fm, FormatMap, FormatPieces, ToFormatPieces};
-use id3::TagLike;
 use jwalk::WalkDir;
 use rayon::prelude::*;
 use std::ffi::OsStr;
@@ -20,23 +18,23 @@ const ALLOWED_EXT: &str = "epub";
 fn fix_book(book: &mut types::Book, dry_run: bool) {
     let fix_results = fixers::run_fixers(book, dry_run);
     match fix_results {
-        Ok(applied_fixers) => {
-            if applied_fixers {
-                print_updated_tags(book);
-            }
+        Ok(_applied_fixers) => {
+            // if applied_fixers {
+            //     print_updated_tags(book);
+            // }
         }
         Err(err) => eprintln!("cannot fix {}: {:?}", book.path.display(), err),
     }
 }
 
-fn print_updated_tags(track: &types::Book) {
-    println!(
-        "{}: updated tags: author: '{}', title: '{}'",
-        track.path.display(),
-        track.tag.artist().unwrap_or_default(),
-        track.tag.title().unwrap_or_default(),
-    );
-}
+// fn print_updated_tags(book: &types::Book) {
+//     println!(
+//         "{}: updated tags: author: '{}', title: '{}'",
+//         book.path.display(),
+//         book.author.unwrap_or_default(),
+//         book.title.unwrap_or_default(),
+//     );
+// }
 
 fn rename_book(
     track: &types::Book,
@@ -47,11 +45,7 @@ fn rename_book(
     let new_path = rename::rename_item(track, fp, output_path, dry_run);
 
     match new_path {
-        Ok(Some(new_path)) => println!(
-            "{}: renamed to {}",
-            track.path.display(),
-            new_path.display()
-        ),
+        Ok(Some(new_path)) => println!("{} -> {}", track.path.display(), new_path.display()),
         Ok(None) => (),
         Err(err) => eprintln!("cannot rename {}: {:?}", track.path.display(), err),
     }
@@ -59,7 +53,7 @@ fn rename_book(
 
 const ADDITIONAL_ACCEPTED_CHARS: &[char] = &['.', '-', '(', ')', ','];
 
-fn clean_part(path_part: &str) -> String {
+fn clean_part(path_part: String) -> String {
     path_part
         .chars()
         .map(|c| {
@@ -78,10 +72,10 @@ fn clean_part(path_part: &str) -> String {
 fn get_format_pieces(tmpl: &str) -> Result<funcfmt::FormatPieces<types::Book>> {
     let formatters: FormatMap<types::Book> = fm!(
         "author" => |t: &types::Book| Some(clean_part(
-            t.tag.artist().unwrap_or("Unknown")
+            t.author.clone().unwrap_or("Unknown".to_string())
         )),
         "title" => |t: &types::Book| Some(clean_part(
-            t.tag.title().unwrap_or("Untitled")
+            t.title.clone().unwrap_or("Untitled".to_string())
         )),
     );
 
