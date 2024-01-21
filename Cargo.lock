@@ -36,21 +36,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
-name = "bitflags"
-version = "2.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c70beb79cbb5ce9c4f8e20849978f34225931f665bb49efa6982875a4d5facb3"
-
-[[package]]
 name = "bookorg"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "anyhow",
  "clap",
  "cow-utils",
  "epub",
  "funcfmt",
- "id3",
  "jwalk",
  "libc",
  "once_cell",
@@ -243,17 +236,6 @@ name = "heck"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
-
-[[package]]
-name = "id3"
-version = "1.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf8550abe8a02c044e8f4162c8ddb4020fc65b5e7771ad9b80c25e13ed4536b6"
-dependencies = [
- "bitflags",
- "byteorder",
- "flate2",
-]
 
 [[package]]
 name = "jwalk"
