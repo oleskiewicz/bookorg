@@ -18,23 +18,10 @@ const ALLOWED_EXT: &str = "epub";
 fn fix_book(book: &mut types::Book, dry_run: bool) {
     let fix_results = fixers::run_fixers(book, dry_run);
     match fix_results {
-        Ok(_applied_fixers) => {
-            // if applied_fixers {
-            //     print_updated_tags(book);
-            // }
-        }
+        Ok(_) => {}
         Err(err) => eprintln!("cannot fix {}: {:?}", book.path.display(), err),
     }
 }
-
-// fn print_updated_tags(book: &types::Book) {
-//     println!(
-//         "{}: updated tags: author: '{}', title: '{}'",
-//         book.path.display(),
-//         book.author.unwrap_or_default(),
-//         book.title.unwrap_or_default(),
-//     );
-// }
 
 fn rename_book(
     track: &types::Book,
